@@ -1,0 +1,12 @@
+[package]
+name = "pininorustless"
+version = "0.1.0"
+authors = ["gusdelact"]
+
+[dependencies]
+rustless = "0.10.0"
+iron = "0.4"
+url = "1"
+serde = "0.8"
+serde_json = "0.8"
+valico = "1"
