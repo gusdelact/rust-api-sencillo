@@ -1,0 +1,64 @@
+<html> 
+   <head>
+   </head>
+   <body>
+     <p> Bienvenidos Frikis de la comunidad Rust</p>
+     <h1> Mensaje </h1>
+     <form>
+        <label for="mensaje">Pon tu friki mensaje</label><br/>
+        <textarea id="mensaje"></textarea> <br/>
+        <button id="enviarBtn">Enviar</button>
+     </form>
+     <h2 id="resultado"></h2>
+     <table id="mensajes">
+     </table>
+
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+     <script type="text/javascript">
+        var API_URL= 'http://127.0.0.1:4000/api/v1/frikis';
+        $(document).ready(
+           function() {
+            $.ajax({
+                 type: 'GET',
+                 crossDomain: true,
+                 dataType: "json",
+                 url: 'http://127.0.0.1:4000/api/v1/frikis',
+                 success: function(data) {
+                    $('#mensajes').html('');
+                    data.forEach( function(friki) {
+                      var renglon = '<tr>'
+                        +'<td>'+friki.date.toString()+'</td>'
+                        +'<td>'+friki.user.toString()+'</td>'
+                        +'<td>'+friki.greeting.toString()+'</td>'
+                         +'</tr>';
+                      $('#mensajes').append(renglon);
+                    }); //foreach
+                 }, //sucess
+                 error: function(xhr, ajaxOptions, thrownError) 
+                   { alert('Failed! ' + xhr.status + '*** ' + thrownError); },
+                });
+           } //ajax get
+
+
+        ); //ready 
+//manejo del boton enviar
+        $('#enviarBtn').on('click', function() {
+                $.ajax({
+                  type: "POST",
+                  url: 'http://127.0.0.1:4000/api/v1/friki/webapp',
+                  dataType: "json",
+                  data: {"saludo":$('#mensaje').val(),"nombre":"webapp"},
+                  success: function(data) {
+                        location.reload();
+                        $('#resultado').text("Id mensaje"+data).
+                         slideUp(300).delay(60000).fadeIn(400);
+                        
+                   }, //success
+                 error: function(xhr, ajaxOptions, thrownError) 
+                   { alert('Failed! ' + xhr.status + '*** ' + thrownError); },
+                });
+                return false;
+            }); //enviarBtn onClick
+     </script>
+   </body>
+</html>

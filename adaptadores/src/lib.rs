@@ -95,6 +95,7 @@ pub fn write_entry(url:String, entry: Entry) -> u64 {
      handle.post(true).unwrap();
 //indicar los datos a transmitir, formato de bytes
      handle.post_fields_copy(json.as_bytes());
+     handle.verbose(true).unwrap();
 //buffer para recibir la respuesta
      let mut data = Vec::new();
      {

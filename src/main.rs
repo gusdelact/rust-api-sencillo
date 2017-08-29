@@ -4,6 +4,7 @@ extern crate url;
 extern crate serde;
 extern crate serde_json;
 extern crate valico;
+extern crate unicase;
 
 //libreria de adaptadores
 extern crate adaptadores;
@@ -11,6 +12,75 @@ extern crate adaptadores;
 use valico::json_dsl;
 use rustless::batteries::swagger;
 use rustless::{Nesting};
+use iron::headers::{ AccessControlAllowOrigin };
+use iron::headers::{ AccessControlAllowMethods };
+use iron::headers::{ AccessControlAllowHeaders };
+use iron::headers::{ AccessControlExposeHeaders };
+use unicase::UniCase;
+use iron::prelude::*;
+use iron::middleware::AfterMiddleware;
+use  iron::method::Method;
+
+struct CorsMiddleware;
+
+impl AfterMiddleware for CorsMiddleware {
+    fn after(&self, req: &mut Request, mut res: Response) -> 
+          IronResult<Response> {
+        res.headers.set(AccessControlAllowOrigin::Any);
+        res.headers.set(AccessControlAllowMethods(
+               vec![
+                    Method::Options,
+                    Method::Get, 
+                    Method::Post, 
+                    Method::Put,
+                    Method::Delete,
+                    Method::Head,
+                    Method::Trace,
+                    Method::Connect,
+           ]));
+        res.headers.set( AccessControlAllowHeaders(
+               vec![
+                UniCase("Origin".to_owned()),
+                UniCase("Content-Type".to_owned()),
+                UniCase("X-Amz-Date".to_owned()),
+                UniCase("Authorization".to_owned()),
+                UniCase("X-Api-Key".to_owned()),
+                UniCase("X-Amz-Security-Token".to_owned()),
+                UniCase("accept".to_owned()),
+                UniCase("X-Auth-Token".to_owned()),
+                UniCase("Access-Control-Allow-Origin".to_owned()),
+                UniCase("Access-Control-Allow-Headers".to_owned()),
+                UniCase("Access-Control-Allow-Methods".to_owned()),
+                UniCase("Access-Control-Request-Headers".to_owned()),
+                UniCase("Access-Control-Request-Method".to_owned()),
+                UniCase("etag".to_owned()),
+                UniCase("content-length".to_owned()),
+                UniCase("X-PINGOTHER".to_owned()),
+           ]));
+
+        res.headers.set( AccessControlAllowHeaders(
+               vec![
+                UniCase("Origin".to_owned()),
+                UniCase("Content-Type".to_owned()),
+                UniCase("X-Amz-Date".to_owned()),
+                UniCase("Authorization".to_owned()),
+                UniCase("X-Api-Key".to_owned()),
+                UniCase("X-Amz-Security-Token".to_owned()),
+                UniCase("accept".to_owned()),
+                UniCase("X-Auth-Token".to_owned()),
+                UniCase("Access-Control-Allow-Origin".to_owned()),
+                UniCase("Access-Control-Allow-Headers".to_owned()),
+                UniCase("Access-Control-Allow-Methods".to_owned()),
+                UniCase("Access-Control-Request-Headers".to_owned()),
+                UniCase("Access-Control-Request-Method".to_owned()),
+                UniCase("etag".to_owned()),
+                UniCase("content-length".to_owned()),
+                UniCase("X-PINGOTHER".to_owned()),
+           ]));
+        Ok(res)
+    }
+}
+
 
 fn main() {
 
@@ -94,7 +164,8 @@ fn main() {
         },
         ..std::default::Default::default()
     });
-
+    let mut chain = iron::Chain::new(app);
+    chain.link_after(CorsMiddleware);
 //ejecutar el servidor Web con Iron
-    iron::Iron::new(app).http("127.0.0.1:4000").unwrap();
+    iron::Iron::new(chain).http("127.0.0.1:4000").unwrap();
 }
