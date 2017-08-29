@@ -7,13 +7,13 @@ use curl::easy::Easy;
 use curl::easy::List;
 use serde_json::{Value};
 #[derive(Serialize, Deserialize,Debug)]
-struct Entry {
-  user: String,
-  greeting: String, 
-  date: u64,
+pub struct Entry {
+  pub user: String,
+  pub greeting: String, 
+  pub date: u64,
 }
 
-fn read_entries(url:String) -> Vec<Entry> {
+pub fn read_entries(url:String) -> Vec<Entry> {
      //buffer para almacenar resultado de la consulta
      let mut data = Vec::new();
      //para manejar la conexion via cURL
@@ -79,7 +79,7 @@ fn read_entries(url:String) -> Vec<Entry> {
           entries 
     }//read_entries
     
-fn write_entry(url:String, entry: Entry) -> u64 {
+pub fn write_entry(url:String, entry: Entry) -> u64 {
      //referncia para manejar cURL
      let mut handle = Easy::new();
 //serializar a JSON     
